@@ -85,6 +85,16 @@ class UsuarioController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        if ($user->id === auth()->id()) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'No podés eliminar tu propia cuenta.');
+        }
+
+        if ($user->hasRole('super-admin') && User::role('super-admin')->count() <= 1) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'No se puede eliminar el único super-admin del sistema.');
+        }
+
         $user->delete();
 
         return redirect()->route('usuarios.index')

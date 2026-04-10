@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Role, type User } from '@/types';
+import { type BreadcrumbItem, type Role, type SharedData, type User } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -23,7 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UsuariosIndex({ usuarios }: Props) {
-    const { auth } = usePage().props as any;
+    const { auth } = usePage<SharedData>().props;
     const [usuarioAEliminar, setUsuarioAEliminar] = useState<User | null>(null);
 
     function confirmarEliminar() {
