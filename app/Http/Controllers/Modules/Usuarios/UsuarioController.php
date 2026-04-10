@@ -85,9 +85,9 @@ class UsuarioController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        $user->update(['activo' => false]);
+        $user->delete();
 
         return redirect()->route('usuarios.index')
-            ->with('success', 'Usuario desactivado correctamente.');
+            ->with('success', 'Usuario eliminado correctamente.');
     }
 }

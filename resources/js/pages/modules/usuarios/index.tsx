@@ -1,9 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type Role, type User } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 interface Props {
     usuarios: {
@@ -22,11 +24,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function UsuariosIndex({ usuarios }: Props) {
     const { auth } = usePage().props as any;
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState<User | null>(null);
 
-    function desactivar(id: number) {
-        if (confirm('¿Desactivar este usuario?')) {
-            router.delete(`/usuarios/${id}`);
-        }
+    function confirmarEliminar() {
+        if (!usuarioAEliminar) return;
+        router.delete(`/usuarios/${usuarioAEliminar.id}`, {
+            onFinish: () => setUsuarioAEliminar(null),
+        });
     }
 
     return (
@@ -83,13 +87,13 @@ export default function UsuariosIndex({ usuarios }: Props) {
                                             <Button variant="outline" size="sm" asChild>
                                                 <Link href={`/usuarios/${u.id}/edit`}>Editar</Link>
                                             </Button>
-                                            {u.activo && u.id !== auth.user.id && (
+                                            {u.id !== auth.user.id && (
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
-                                                    onClick={() => desactivar(u.id)}
+                                                    onClick={() => setUsuarioAEliminar(u)}
                                                 >
-                                                    Desactivar
+                                                    Eliminar
                                                 </Button>
                                             )}
                                         </div>
@@ -120,6 +124,27 @@ export default function UsuariosIndex({ usuarios }: Props) {
                     </div>
                 )}
             </div>
+
+            {/* Dialog de confirmación */}
+            <Dialog open={!!usuarioAEliminar} onOpenChange={(open) => !open && setUsuarioAEliminar(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>¿Eliminar usuario?</DialogTitle>
+                        <DialogDescription>
+                            Estás por eliminar a <span className="font-semibold text-foreground">{usuarioAEliminar?.name}</span>.
+                            Esta acción se puede revertir.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setUsuarioAEliminar(null)}>
+                            Cancelar
+                        </Button>
+                        <Button variant="destructive" onClick={confirmarEliminar}>
+                            Eliminar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }
