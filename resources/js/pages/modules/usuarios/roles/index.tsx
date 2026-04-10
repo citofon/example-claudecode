@@ -72,11 +72,7 @@ export default function RolesIndex({ roles }: Props) {
                                                 <Link href={`/roles/${rol.id}/edit`}>Editar</Link>
                                             </Button>
                                             {!ROLES_SISTEMA.includes(rol.name) && (
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => eliminar(rol.id, rol.name)}
-                                                >
+                                                <Button variant="destructive" size="sm" onClick={() => eliminar(rol.id, rol.name)}>
                                                     Eliminar
                                                 </Button>
                                             )}

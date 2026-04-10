@@ -78,9 +78,7 @@ export default function UsuariosIndex({ usuarios }: Props) {
                                         )}
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={u.activo ? 'default' : 'destructive'}>
-                                            {u.activo ? 'Activo' : 'Inactivo'}
-                                        </Badge>
+                                        <Badge variant={u.activo ? 'default' : 'destructive'}>{u.activo ? 'Activo' : 'Inactivo'}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
@@ -88,11 +86,7 @@ export default function UsuariosIndex({ usuarios }: Props) {
                                                 <Link href={`/usuarios/${u.id}/edit`}>Editar</Link>
                                             </Button>
                                             {u.id !== auth.user.id && (
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => setUsuarioAEliminar(u)}
-                                                >
+                                                <Button variant="destructive" size="sm" onClick={() => setUsuarioAEliminar(u)}>
                                                     Eliminar
                                                 </Button>
                                             )}
@@ -108,18 +102,10 @@ export default function UsuariosIndex({ usuarios }: Props) {
                 {(usuarios.prev_page_url || usuarios.next_page_url) && (
                     <div className="flex justify-end gap-2">
                         <Button variant="outline" size="sm" disabled={!usuarios.prev_page_url} asChild={!!usuarios.prev_page_url}>
-                            {usuarios.prev_page_url ? (
-                                <Link href={usuarios.prev_page_url}>Anterior</Link>
-                            ) : (
-                                <span>Anterior</span>
-                            )}
+                            {usuarios.prev_page_url ? <Link href={usuarios.prev_page_url}>Anterior</Link> : <span>Anterior</span>}
                         </Button>
                         <Button variant="outline" size="sm" disabled={!usuarios.next_page_url} asChild={!!usuarios.next_page_url}>
-                            {usuarios.next_page_url ? (
-                                <Link href={usuarios.next_page_url}>Siguiente</Link>
-                            ) : (
-                                <span>Siguiente</span>
-                            )}
+                            {usuarios.next_page_url ? <Link href={usuarios.next_page_url}>Siguiente</Link> : <span>Siguiente</span>}
                         </Button>
                     </div>
                 )}
@@ -131,8 +117,8 @@ export default function UsuariosIndex({ usuarios }: Props) {
                     <DialogHeader>
                         <DialogTitle>¿Eliminar usuario?</DialogTitle>
                         <DialogDescription>
-                            Estás por eliminar a <span className="font-semibold text-foreground">{usuarioAEliminar?.name}</span>.
-                            Esta acción se puede revertir.
+                            Estás por eliminar a <span className="text-foreground font-semibold">{usuarioAEliminar?.name}</span>. Esta acción se puede
+                            revertir.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
