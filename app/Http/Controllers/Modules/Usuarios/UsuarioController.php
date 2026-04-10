@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Modules\Usuarios;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Usuarios\StoreUsuarioRequest;
+use App\Http\Requests\Usuarios\UpdateUsuarioRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -30,16 +31,9 @@ class UsuarioController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUsuarioRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-            'cargo'    => ['nullable', 'string', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:20'],
-            'rol'      => ['nullable', 'string', 'exists:roles,name'],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name'     => $validated['name'],
@@ -65,17 +59,9 @@ class UsuarioController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUsuarioRequest $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', "unique:users,email,{$user->id}"],
-            'password' => ['nullable', 'string', 'min:8'],
-            'cargo'    => ['nullable', 'string', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:20'],
-            'activo'   => ['boolean'],
-            'rol'      => ['nullable', 'string', 'exists:roles,name'],
-        ]);
+        $validated = $request->validated();
 
         $data = [
             'name'     => $validated['name'],
