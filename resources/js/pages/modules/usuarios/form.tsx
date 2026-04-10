@@ -51,24 +51,13 @@ export default function UsuarioForm({ usuario, roles }: Props) {
                 <form onSubmit={submit} className="flex flex-col gap-5">
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="name">Nombre</Label>
-                        <Input
-                            id="name"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            autoComplete="off"
-                        />
+                        <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="off" />
                         <InputError message={errors.name} />
                     </div>
 
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            autoComplete="off"
-                        />
+                        <Input id="email" type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} autoComplete="off" />
                         <InputError message={errors.email} />
                     </div>
 
@@ -88,21 +77,13 @@ export default function UsuarioForm({ usuario, roles }: Props) {
 
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="cargo">Cargo</Label>
-                        <Input
-                            id="cargo"
-                            value={data.cargo}
-                            onChange={(e) => setData('cargo', e.target.value)}
-                        />
+                        <Input id="cargo" value={data.cargo} onChange={(e) => setData('cargo', e.target.value)} />
                         <InputError message={errors.cargo} />
                     </div>
 
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="telefono">Teléfono</Label>
-                        <Input
-                            id="telefono"
-                            value={data.telefono}
-                            onChange={(e) => setData('telefono', e.target.value)}
-                        />
+                        <Input id="telefono" value={data.telefono} onChange={(e) => setData('telefono', e.target.value)} />
                         <InputError message={errors.telefono} />
                     </div>
 

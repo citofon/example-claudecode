@@ -1,9 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Role, type User } from '@/types';
+import { type BreadcrumbItem, type Role, type SharedData, type User } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 interface Props {
     usuarios: {
@@ -21,12 +23,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UsuariosIndex({ usuarios }: Props) {
-    const { auth } = usePage().props as any;
+    const { auth } = usePage<SharedData>().props;
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState<User | null>(null);
 
-    function desactivar(id: number) {
-        if (confirm('¿Desactivar este usuario?')) {
-            router.delete(`/usuarios/${id}`);
-        }
+    function confirmarEliminar() {
+        if (!usuarioAEliminar) return;
+        router.delete(`/usuarios/${usuarioAEliminar.id}`, {
+            onFinish: () => setUsuarioAEliminar(null),
+        });
     }
 
     return (
@@ -74,22 +78,16 @@ export default function UsuariosIndex({ usuarios }: Props) {
                                         )}
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={u.activo ? 'default' : 'destructive'}>
-                                            {u.activo ? 'Activo' : 'Inactivo'}
-                                        </Badge>
+                                        <Badge variant={u.activo ? 'default' : 'destructive'}>{u.activo ? 'Activo' : 'Inactivo'}</Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
                                             <Button variant="outline" size="sm" asChild>
                                                 <Link href={`/usuarios/${u.id}/edit`}>Editar</Link>
                                             </Button>
-                                            {u.activo && u.id !== auth.user.id && (
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => desactivar(u.id)}
-                                                >
-                                                    Desactivar
+                                            {u.id !== auth.user.id && (
+                                                <Button variant="destructive" size="sm" onClick={() => setUsuarioAEliminar(u)}>
+                                                    Eliminar
                                                 </Button>
                                             )}
                                         </div>
@@ -104,22 +102,35 @@ export default function UsuariosIndex({ usuarios }: Props) {
                 {(usuarios.prev_page_url || usuarios.next_page_url) && (
                     <div className="flex justify-end gap-2">
                         <Button variant="outline" size="sm" disabled={!usuarios.prev_page_url} asChild={!!usuarios.prev_page_url}>
-                            {usuarios.prev_page_url ? (
-                                <Link href={usuarios.prev_page_url}>Anterior</Link>
-                            ) : (
-                                <span>Anterior</span>
-                            )}
+                            {usuarios.prev_page_url ? <Link href={usuarios.prev_page_url}>Anterior</Link> : <span>Anterior</span>}
                         </Button>
                         <Button variant="outline" size="sm" disabled={!usuarios.next_page_url} asChild={!!usuarios.next_page_url}>
-                            {usuarios.next_page_url ? (
-                                <Link href={usuarios.next_page_url}>Siguiente</Link>
-                            ) : (
-                                <span>Siguiente</span>
-                            )}
+                            {usuarios.next_page_url ? <Link href={usuarios.next_page_url}>Siguiente</Link> : <span>Siguiente</span>}
                         </Button>
                     </div>
                 )}
             </div>
+
+            {/* Dialog de confirmación */}
+            <Dialog open={!!usuarioAEliminar} onOpenChange={(open) => !open && setUsuarioAEliminar(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>¿Eliminar usuario?</DialogTitle>
+                        <DialogDescription>
+                            Estás por eliminar a <span className="text-foreground font-semibold">{usuarioAEliminar?.name}</span>. Esta acción se puede
+                            revertir.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setUsuarioAEliminar(null)}>
+                            Cancelar
+                        </Button>
+                        <Button variant="destructive" onClick={confirmarEliminar}>
+                            Eliminar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

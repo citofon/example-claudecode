@@ -36,14 +36,14 @@ class UsuarioController extends Controller
         $validated = $request->validated();
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
             'password' => $validated['password'],
-            'cargo'    => $validated['cargo'] ?? null,
+            'cargo' => $validated['cargo'] ?? null,
             'telefono' => $validated['telefono'] ?? null,
         ]);
 
-        if (!empty($validated['rol'])) {
+        if (! empty($validated['rol'])) {
             $user->assignRole($validated['rol']);
         }
 
@@ -55,7 +55,7 @@ class UsuarioController extends Controller
     {
         return Inertia::render('modules/usuarios/form', [
             'usuario' => $user->load('roles'),
-            'roles'   => Role::orderBy('name')->get(['id', 'name']),
+            'roles' => Role::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -64,14 +64,14 @@ class UsuarioController extends Controller
         $validated = $request->validated();
 
         $data = [
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'cargo'    => $validated['cargo'] ?? null,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'cargo' => $validated['cargo'] ?? null,
             'telefono' => $validated['telefono'] ?? null,
-            'activo'   => $validated['activo'] ?? $user->activo,
+            'activo' => $validated['activo'] ?? $user->activo,
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $data['password'] = $validated['password'];
         }
 
@@ -85,9 +85,19 @@ class UsuarioController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        $user->update(['activo' => false]);
+        if ($user->id === auth()->id()) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'No podés eliminar tu propia cuenta.');
+        }
+
+        if ($user->hasRole('super-admin') && User::role('super-admin')->count() <= 1) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'No se puede eliminar el único super-admin del sistema.');
+        }
+
+        $user->delete();
 
         return redirect()->route('usuarios.index')
-            ->with('success', 'Usuario desactivado correctamente.');
+            ->with('success', 'Usuario eliminado correctamente.');
     }
 }
