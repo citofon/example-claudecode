@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Spatie\Permission\Models\Permission;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -39,12 +41,52 @@ class HandleInertiaRequests extends Middleware
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         return array_merge(parent::share($request), [
-            ...parent::share($request),
-            'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
-            'auth' => [
+            'name'       => config('app.name'),
+            'quote'      => ['message' => trim($message), 'author' => trim($author)],
+            'auth'       => [
                 'user' => $request->user(),
             ],
+            'navigation' => $this->buildNavigation($request->user()),
         ]);
+    }
+
+    private function buildNavigation(?User $user): array
+    {
+        if (!$user) {
+            return [];
+        }
+
+        $items = [
+            ['title' => 'Dashboard', 'icon' => 'layout-grid', 'url' => route('dashboard')],
+        ];
+
+        $modulos = [
+            ['permiso' => 'usuarios',      'title' => 'Usuarios',      'icon' => 'users',        'url' => '/usuarios'],
+            ['permiso' => 'rrhh',          'title' => 'RRHH',          'icon' => 'hard-hat',     'url' => '/rrhh'],
+            ['permiso' => 'cumplimiento',  'title' => 'Cumplimiento',  'icon' => 'shield-check', 'url' => '/cumplimiento'],
+            ['permiso' => 'planificacion', 'title' => 'Planificación', 'icon' => 'calendar',     'url' => '/planificacion'],
+            ['permiso' => 'logistica',     'title' => 'Logística',     'icon' => 'truck',        'url' => '/logistica'],
+            ['permiso' => 'activos',       'title' => 'Activos',       'icon' => 'package',      'url' => '/activos'],
+            ['permiso' => 'bodega',        'title' => 'Bodega',        'icon' => 'box',          'url' => '/bodega'],
+            ['permiso' => 'finanzas',      'title' => 'Finanzas',      'icon' => 'dollar-sign',  'url' => '/finanzas'],
+            ['permiso' => 'conciliacion',  'title' => 'Conciliación',  'icon' => 'file-check',   'url' => '/conciliacion'],
+            ['permiso' => 'ia',            'title' => 'IA Asistiva',   'icon' => 'bot',          'url' => '/ia'],
+        ];
+
+        foreach ($modulos as $m) {
+            $permisosDelModulo = Permission::where('name', 'like', $m['permiso'] . '.%')
+                ->pluck('name')
+                ->toArray();
+
+            if (!empty($permisosDelModulo) && $user->hasAnyPermission($permisosDelModulo)) {
+                $items[] = [
+                    'title' => $m['title'],
+                    'icon'  => $m['icon'],
+                    'url'   => $m['url'],
+                ];
+            }
+        }
+
+        return $items;
     }
 }
