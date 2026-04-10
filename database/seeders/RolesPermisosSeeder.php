@@ -10,16 +10,16 @@ use Spatie\Permission\PermissionRegistrar;
 class RolesPermisosSeeder extends Seeder
 {
     const MODULOS = [
-        'usuarios'     => ['usuarios', 'roles', 'permisos'],
-        'rrhh'         => ['empleados', 'contratos', 'asistencia', 'vacaciones'],
+        'usuarios' => ['usuarios', 'roles', 'permisos'],
+        'rrhh' => ['empleados', 'contratos', 'asistencia', 'vacaciones'],
         'cumplimiento' => ['certificados', 'auditorias', 'documentos'],
-        'planificacion'=> ['proyectos', 'tareas', 'recursos'],
-        'logistica'    => ['transporte', 'rutas', 'proveedores'],
-        'activos'      => ['equipos', 'mantenimiento', 'inventario'],
-        'bodega'       => ['stock', 'movimientos', 'pedidos'],
-        'finanzas'     => ['presupuesto', 'facturas', 'reportes'],
+        'planificacion' => ['proyectos', 'tareas', 'recursos'],
+        'logistica' => ['transporte', 'rutas', 'proveedores'],
+        'activos' => ['equipos', 'mantenimiento', 'inventario'],
+        'bodega' => ['stock', 'movimientos', 'pedidos'],
+        'finanzas' => ['presupuesto', 'facturas', 'reportes'],
         'conciliacion' => ['cuentas', 'diferencias', 'cierres'],
-        'ia'           => ['alertas', 'predicciones', 'configuracion'],
+        'ia' => ['alertas', 'predicciones', 'configuracion'],
     ];
 
     const ACCIONES = ['ver', 'crear', 'editar', 'eliminar', 'exportar'];
@@ -48,7 +48,7 @@ class RolesPermisosSeeder extends Seeder
 
         // admin: todos excepto ia.configuracion.*
         $admin = Role::findOrCreate('admin');
-        $permisosAdmin = array_filter($todosLosPermisos, fn($p) => !str_starts_with($p, 'ia.configuracion.'));
+        $permisosAdmin = array_filter($todosLosPermisos, fn ($p) => ! str_starts_with($p, 'ia.configuracion.'));
         $admin->syncPermissions(array_values($permisosAdmin));
 
         // rrhh-manager: todos los permisos de rrhh

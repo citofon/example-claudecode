@@ -44,7 +44,10 @@ export default function RolForm({ rol, permisos }: Props) {
             const nuevos = nombres.filter((n) => !data.permisos.includes(n));
             setData('permisos', [...data.permisos, ...nuevos]);
         } else {
-            setData('permisos', data.permisos.filter((p) => !nombres.includes(p)));
+            setData(
+                'permisos',
+                data.permisos.filter((p) => !nombres.includes(p)),
+            );
         }
     }
 
@@ -92,10 +95,7 @@ export default function RolForm({ rol, permisos }: Props) {
                                         checked={moduloCompleto(grupo)}
                                         onCheckedChange={(checked) => toggleModulo(grupo, !!checked)}
                                     />
-                                    <label
-                                        htmlFor={`modulo-${grupo.modulo}`}
-                                        className="cursor-pointer text-sm font-semibold capitalize"
-                                    >
+                                    <label htmlFor={`modulo-${grupo.modulo}`} className="cursor-pointer text-sm font-semibold capitalize">
                                         {grupo.modulo}
                                     </label>
                                 </div>
@@ -111,10 +111,7 @@ export default function RolForm({ rol, permisos }: Props) {
                                                     checked={data.permisos.includes(permiso.name)}
                                                     onCheckedChange={(checked) => togglePermiso(permiso.name, !!checked)}
                                                 />
-                                                <label
-                                                    htmlFor={permiso.name}
-                                                    className="text-muted-foreground cursor-pointer text-xs"
-                                                >
+                                                <label htmlFor={permiso.name} className="text-muted-foreground cursor-pointer text-xs">
                                                     {etiqueta}
                                                 </label>
                                             </div>

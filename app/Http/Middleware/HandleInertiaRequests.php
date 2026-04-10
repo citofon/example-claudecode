@@ -41,9 +41,9 @@ class HandleInertiaRequests extends Middleware
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         return array_merge(parent::share($request), [
-            'name'       => config('app.name'),
-            'quote'      => ['message' => trim($message), 'author' => trim($author)],
-            'auth'       => [
+            'name' => config('app.name'),
+            'quote' => ['message' => trim($message), 'author' => trim($author)],
+            'auth' => [
                 'user' => $request->user(),
             ],
             'navigation' => $this->buildNavigation($request->user()),
@@ -52,7 +52,7 @@ class HandleInertiaRequests extends Middleware
 
     private function buildNavigation(?User $user): array
     {
-        if (!$user) {
+        if (! $user) {
             return [];
         }
 
@@ -74,15 +74,15 @@ class HandleInertiaRequests extends Middleware
         ];
 
         foreach ($modulos as $m) {
-            $permisosDelModulo = Permission::where('name', 'like', $m['permiso'] . '.%')
+            $permisosDelModulo = Permission::where('name', 'like', $m['permiso'].'.%')
                 ->pluck('name')
                 ->toArray();
 
-            if (!empty($permisosDelModulo) && $user->hasAnyPermission($permisosDelModulo)) {
+            if (! empty($permisosDelModulo) && $user->hasAnyPermission($permisosDelModulo)) {
                 $items[] = [
                     'title' => $m['title'],
-                    'icon'  => $m['icon'],
-                    'url'   => $m['url'],
+                    'icon' => $m['icon'],
+                    'url' => $m['url'],
                 ];
             }
         }
